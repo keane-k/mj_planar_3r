@@ -1,0 +1,69 @@
+<!-- Manipulator arm with 3Rigid Links [2D - Planar] -->
+<mujoco>
+
+    <option gravity = "0 0 0" />
+    
+    <worldbody>
+    <light diffuse = ".5 .5 .5" pos = "0 0 50" dir = "0 0 -1" />
+
+        <!-- Create a white base (plane) -->
+        <!-- rgba = 'red green blue opacity(1 is opaque)' -->
+        <geom type = "plane" size = "2.5 2.5 0.1" rgba = "1 1 1 1" />
+
+        <!-- 1st Link - red rectangle box -->
+        <!-- Next link to be nested in this <body></body> -->
+        <!-- XYZ-axis follows the Right-Hand Rule -->
+        <!-- Joint takes reference from Body Frame, thus, you need to shift Body Frame pos to where the joint would be  -->
+        <body name = 'link1' pos = "0 0 0.15">    
+            <geom type = "box" size = ".5 .05 .05" pos ="0.5 0 0"  rgba = "1 0 0 1"/>
+
+            <!-- joint <type> is hinge -->
+            <!-- <pos> takes reference from body frame -->
+            <!-- include <axis> of rotation, follow DH params, rotation axis is along the z-axis
+            According to world frame, view angle has the white base as the background -->
+            <joint name = 'joint1' type = "hinge" pos = "0 0 0" axis = "0 0 1"/>
+
+            <!-- Specify where Center of Mass is, default is attached to Geometry Frame -->
+            <!-- <pos> is wrt. to body frame, not g_frame, keep this in mind -->
+            <inertial mass = "1" pos = "0.5 0 0" fullinertia = "1 1 .1 0 0 0" />
+
+
+            <!-- 2nd Link - green rectangle box -->
+            <!-- Next link to be nested in this <body></body> -->
+            <!-- Because it nested within <body1>, pos now takes reference from link1 body frame -->
+            <body name = 'link2' pos = "1 0 0">    
+                <geom type = "box" size = ".5 .05 .05" pos ="0.5 0 0"  rgba = "0 1 0 1"/>
+
+                <joint name = 'joint2' type = "hinge" pos = "0 0 0" axis = "0 0 1"/>
+
+                <inertial mass = "1" pos = "0.5 0 0" fullinertia = "1 1 .1 0 0 0" />
+            
+            
+                <!-- 3rd Link - blue rectangle box -->
+                <!-- Next link (end-effector) to be nested in this <body></body> -->
+                <!-- Because it nested within <body1>, pos now takes reference from link2 body frame -->
+                <body name = 'link3' pos = "1 0 0">    
+                    <geom type = "box" size = "0.125 .05 .05" pos ="0.125 0 0"  rgba = "0 0 1 1"/>
+
+                    <joint name = 'joint3' type = "hinge" pos = "0 0 0" axis = "0 0 1"/>
+
+                    <inertial mass = ".2" pos = "0.125 0 0" fullinertia = ".1 .1 .02 0 0 0" />
+                
+                
+                    <!-- End-Effector -->
+                    <site name = "end-effector" size = ".05" pos = "0.25 0 0" rgba = "128 0 128 1" />
+                </body>
+            </body>
+        </body>
+    </worldbody>
+
+    <!-- We can set an initial starting position for the 3R Manipulator  -->
+    <!-- You will need to press on Key value or [Load Key] button in MuJoCo GUI in Simulations tab -->
+    <keyframe>
+        <!-- There are 3 revolute joints, <qpos> allows you to specify each joint starting angle -->
+        <key name = "home_pos" qpos = "1.5707 -1.5707 -1.5707"/>
+    </keyframe>
+
+
+
+</mujoco>
